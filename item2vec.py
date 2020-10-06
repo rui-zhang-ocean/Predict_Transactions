@@ -1,17 +1,20 @@
-import tensorflow as tf
+# import tensorflow as tf
 
-flags = tf.app.flags
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
-flags.DEFINE_integer("embedding_dimension", 100, "The dimension of the" +
-                     "embedding space")
+#flags = tf.app.flags
+#FLAGS = flags.FLAGS
+
+#flags.DEFINE_integer("embedding_dimension", 100, "The dimension of the embedding space")
 
 class Item2Vec(object):
     """This class encapsulates the definition, training and use of a skip-gram
     vector embedding model for recommendations. 
     See Barkan and Koenigstein, 2016, Item2Vec."""
     def __init__(self):
-        self.embed_dim = FLAGS.embedding_dimension
-
+        # self.embed_dim = FLAGS.embedding_dimension
+        self.embed_dim = 100
         # The vocabulary size (number of games)
         # This should be determined by reading from the training set.
         self.vocab_size = 100
@@ -60,7 +63,7 @@ class Item2Vec(object):
         # every possible game. (Each row is a set of weights)
         softmax_w = tf.Variable(tf.zeros([self.vocab_size, self.embed_dim]),
                                 name="softmax_weights")
-        softmax_b = tf.Variables(tf.zeros([self.vocab_size]), 
+        softmax_b = tf.Variable(tf.zeros([self.vocab_size]), 
                                  name="softmax_bias")
 
         # Negative sampling for SGNS. We make the assumption of sparsity.
@@ -122,5 +125,5 @@ class Item2Vec(object):
         for step in xrange(self.num_epochs):
             # Get batches here.
             _, loss_val = self.session.run([self.train_node, self.loss], 
-                                            feed_dict: {self.batch: batch,
+                                            feed_dict={self.batch: batch,
                                                         self.labels: labels})
