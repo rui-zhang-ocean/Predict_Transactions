@@ -5,7 +5,7 @@ import datetime
 import pickle
 import random
 
-df_input = pd.read_csv('cc_data_input.csv', index_col = False)
+df_input = pd.read_csv('cc_data_input_10emb.csv', index_col = False)
 
 # remove second column
 df_input = df_input.drop(['Unnamed: 0'], axis=1)
