@@ -5,7 +5,7 @@
 * Applying regression models using macroeconomic data to constrain monthly transaction counts, where data is collected with an automated web scraper.
 * Collaborating with head data scientist at Arima to deploy the model on GCP.
 
-## 0_data_description
+## Data Description
 
 For each transaction, the table contains information below:
 
@@ -20,24 +20,24 @@ For each transaction, the table contains information below:
 * SIC Description (sector)
 * Purchase Amount
 
-## 1_data_cleaning_and_feature_engineer
+## Data Cleaning and Feature Engineering
 
 * Missing values
 * Age
 * Transaction Date
 * Retailer embedding using Item2Vec
 
-## 2_build_synthesizer
+## Build Synthesizer
 
 * Tabular Variational Autoencoder (TVAE)
 * Compute engine setup on Google Cloud
 
-## 3_build_forecast_model
+## Build Forecast Model
 
 * Web Scraper for Statistic Canada
 * Forecast macroeconomic data using `prophet`
 * Regression Model
 
-## 4_deployment
+## Deployment
 
-## 5_future_work
+## Future Work
