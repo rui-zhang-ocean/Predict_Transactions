@@ -19,30 +19,24 @@ For each transaction, the table contains information below:
 * Normalized Retailer
 * SIC Description (sector)
 * Purchase Amount
-* ...
 
 ## 1_data_cleaning_and_feature_engineer
 
-### Missing values
-
-### Age
-
-### Transaction Date
-
-### Retailer embedding using Item2Vec
-
+* Missing values
+* Age
+* Transaction Date
+* Retailer embedding using Item2Vec
 
 ## 2_build_synthesizer
 
-Tabular Variational Autoencoder (TVAE)
+* Tabular Variational Autoencoder (TVAE)
+* Compute engine setup on Google Cloud
 
 ## 3_build_forecast_model
 
-### Web Scraper from Statistic Canada
-
-### Forecast future macroeconomic data
-
-### Regression Model
+* Web Scraper for Statistic Canada
+* Forecast macroeconomic data using `prophet`
+* Regression Model
 
 ## 4_deployment
 
