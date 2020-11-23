@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 
 # load synthesizer from saved object
 with open('/home/rzhang_dal/project/TVAE_synthesizer.pkl', 'rb') as input:
