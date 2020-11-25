@@ -4,6 +4,8 @@ from gensim.models import Word2Vec
 from sdgym.synthesizers import TVAESynthesizer
 import datetime
 import pickle
+from collections import defaultdict
+
 
 #---------------------------------INPUTS--------------------------------------
 raw_data_file = 'data/cc_data.csv'
@@ -56,6 +58,43 @@ df['Account Type'].replace({'investment_account':None,'loans':None},inplace=True
 # remove missing values
 df.dropna(inplace = True)
 
+
+# create retailer mapping file
+retailer_list = list(df['Normalized Retailer'].unique())
+SIC_list = list(df['SIC Description'].unique())
+
+# create dictionary from SIC to retailer
+print('Generating retailer SIC mapping file......')
+retailer_map = defaultdict(list) # DO NOT USE dict.fromkeys, which appends retailer to every key
+
+for i in range(len(retailer_list)):
+    tmp_SIC = df.loc[df['Normalized Retailer'] == retailer_list[i]]['SIC Description'].unique()[0] 
+    retailer_map[tmp_SIC].append(retailer_list[i])
+
+model = Word2Vec.load(retailer_embedding_file)
+# only keep values in the model (more than 5 times appearance)
+for key, value in retailer_map.items():
+    retailer_map[key] = list(set(value) & set(model.wv.vocab))
+    
+# group other SIC (after top N) into other
+df_pivot = view_column_counts(df,'SIC Description')
+list2keep = list(df_pivot.nlargest(9, 'Counts')['SIC Description'])
+other_list = []    
+for key, value in retailer_map.items():
+    if key not in list2keep:
+        other_list = other_list + value
+
+# delete other group key-values in retailer_map
+retailer_map_grouped = {k: retailer_map[k] for k in list2keep}
+
+# add other key-value pairs
+retailer_map_grouped['Other'] = other_list
+
+# save the grouped retailer_map
+#f = open("models/retailer_map_grouped.pkl","wb")
+#pickle.dump(retailer_map_grouped,f)
+#f.close()
+
 # save processed file
 #df_processed = df.copy()
 #df_processed.to_csv('data/cc_data_processed.csv')
@@ -86,7 +125,6 @@ print("SIC to keep: ", list2keep)
 df['SIC Description'] = df['SIC Description'].apply(lambda x: x if x in list2keep else 'Other')
 
 # retailer to embeddings
-model = Word2Vec.load(retailer_embedding_file)
 df = df[df['Normalized Retailer'].isin(list(model.wv.vocab))]
 retailerVec = model.wv[df['Normalized Retailer']]
 
