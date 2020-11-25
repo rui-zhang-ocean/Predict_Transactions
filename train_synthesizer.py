@@ -10,7 +10,7 @@ from collections import defaultdict
 #---------------------------------INPUTS--------------------------------------
 raw_data_file = 'data/cc_data.csv'
 retailer_embedding_file = 'models/retailer_embedding.model'
-sample_num = 5000 # samples to train
+sample_num = 1000 # how many records are used for training
 
 #----------------------------------FUNCTIONS----------------------------------
 # view counts and percentage for each column's elements
