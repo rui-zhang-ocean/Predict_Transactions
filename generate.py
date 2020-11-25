@@ -20,7 +20,7 @@ synthesizer_file = 'models/TVAE_synthesizer.pkl'
 retailer_map_file = 'models/retailer_map_grouped.pkl'
 retailer_embedding_file = 'models/retailer_embedding.model'
 data_processed_file = 'data/cc_data_processed.csv'
-data_input_file = 'data/cc_data_input_10emb_ageCat70.csv'
+data_input_file = 'data/cc_data_input.csv'
 
 # which year and month to generate
 Y = 2020; M = 12
