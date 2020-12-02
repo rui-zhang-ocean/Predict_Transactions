@@ -211,8 +211,8 @@ df_retailerVec = df_sample.iloc[:,idx]
 df_retailerVec['retailerVec'] = df_retailerVec.values.tolist()
 df_SIC_vector = pd.concat([df_reverse['SIC Description'], df_retailerVec['retailerVec']],axis = 1)
 
-model = Word2Vec.load(retailer_embedding_file)
-df_reverse['Normalized Retailer'] = df_SIC_vector.apply(lambda x: return_retailer_SIC(model, retailer_map_grouped, x['SIC Description'],x['retailerVec']), axis = 1)
+retailer2vec_model = Word2Vec.load(retailer_embedding_file)
+df_reverse['Normalized Retailer'] = df_SIC_vector.apply(lambda x: return_retailer_SIC(retailer2vec_model, retailer_map_grouped, x['SIC Description'],x['retailerVec']), axis = 1)
 
 # given period_of_month (start, mid or end) and year (1989) and month (6), return index of the possible days
 df_reverse['Transaction Date'] = df_reverse.apply(lambda x: return_date(x.day_of_week, x.period_of_month, Y, M), axis = 1)
@@ -234,5 +234,5 @@ df_reverse.drop(col2drop, axis = 1, inplace = True, errors = 'ignore')
 # save synthesized data into csv file
 output_filename = 'output/' + str(Y) + '_' + datetime.strptime(str(M), "%m").strftime("%b") + '.csv'
 print('Saving file at ' + output_filename + '......')
-df_reverse.to_csv(output_filename)
+#df_reverse.to_csv(output_filename)
         

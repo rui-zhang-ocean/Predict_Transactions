@@ -9,10 +9,17 @@ from collections import defaultdict
 
 #---------------------------------INPUTS--------------------------------------
 raw_data_file = 'data/cc_data.csv'
-retailer_embedding_file = 'models/retailer_embedding.model'
 sample_num = 1000 # how many records are used for training
+save_files = False
 
 #----------------------------------FUNCTIONS----------------------------------
+# create reatiler sets grouped by SIC and consumer
+def groupBySICAndPerson(df):
+    df_group = df.groupby(['SIC Description','Consumer ID']).agg(lambda x: x.tolist())
+    training_data = df_group['Normalized Retailer'].tolist()
+    training_data = [x for x in training_data if len(x) > 1]
+    return training_data
+
 # view counts and percentage for each column's elements
 def view_column_counts(df, col_name):
     df_pivot = df.groupby(by = col_name).size().reset_index(name='Counts')
@@ -29,8 +36,32 @@ def save_object(obj, filename):
 print('Loading raw data......')
 df = pd.read_csv(raw_data_file)
 
+# select columns for embedding training
+df_train_emb = df[['Consumer ID','Normalized Retailer','SIC Description']].copy()
+
+# create training sets for retailer embedding
+print('Creating training sets......')
+start = datetime.datetime.now()
+training_data = groupBySICAndPerson(df_train_emb)
+print("Sets creating time: " + str(datetime.datetime.now()-start))
+
+# training retailer embedding
+start = datetime.datetime.now()
+print('Training retailer embedding......')
+retailer2vec_model = Word2Vec(sentences = training_data, # list of sets of retailers
+                 iter = 10, # epoch
+                 min_count = 5, # a retailer has to appear more than min_count times to be kept
+                 size = 10, # hidden layer dimensions
+                 workers = 4, # specify the number of threads to be used for training
+                 sg = 1, # Defines the training algorithm. We will use skip-gram so 1 is chosen.
+                 hs = 0, # Set to 0, as we are applying negative sampling.
+                 negative = 10, # If > 0, negative sampling will be used. We will use a value of 5.
+                 window = 9999999)
+print("Model training time: " + str(datetime.datetime.now()-start))
+
+
 # remove unnecessary columns
-print('Pre-processing......')
+print('Pre-processing raw data......')
 col2remove = ['SIC Code', 'Return Amount', 'Reward Amount', 'Transaction ID', 
               'Account Identifier', 'Account Name', 'Account Number', 'Bank Name', 
               'Aggregator Name', 'Consumer ID', 'Consumer Created Date',
@@ -57,6 +88,7 @@ df['Account Type'].replace({'investment_account':None,'loans':None},inplace=True
 
 # remove missing values
 df.dropna(inplace = True)
+df_processed = df.copy()
 
 
 # create retailer mapping file
@@ -64,17 +96,17 @@ retailer_list = list(df['Normalized Retailer'].unique())
 SIC_list = list(df['SIC Description'].unique())
 
 # create dictionary from SIC to retailer
-print('Generating retailer SIC mapping file......')
+print('Creating dictionary from SIC to retailer......')
 retailer_map = defaultdict(list) # DO NOT USE dict.fromkeys, which appends retailer to every key
 
 for i in range(len(retailer_list)):
     tmp_SIC = df.loc[df['Normalized Retailer'] == retailer_list[i]]['SIC Description'].unique()[0] 
     retailer_map[tmp_SIC].append(retailer_list[i])
 
-model = Word2Vec.load(retailer_embedding_file)
+# retailer2vec_model = Word2Vec.load(retailer_embedding_file)
 # only keep values in the model (more than 5 times appearance)
 for key, value in retailer_map.items():
-    retailer_map[key] = list(set(value) & set(model.wv.vocab))
+    retailer_map[key] = list(set(value) & set(retailer2vec_model.wv.vocab))
     
 # group other SIC (after top N) into other
 df_pivot = view_column_counts(df,'SIC Description')
@@ -90,16 +122,8 @@ retailer_map_grouped = {k: retailer_map[k] for k in list2keep}
 # add other key-value pairs
 retailer_map_grouped['Other'] = other_list
 
-# save the grouped retailer_map
-#f = open("models/retailer_map_grouped.pkl","wb")
-#pickle.dump(retailer_map_grouped,f)
-#f.close()
 
-# save processed file
-#df_processed = df.copy()
-#df_processed.to_csv('data/cc_data_processed.csv')
-
-print('Feature engineering.......')
+print('Feature engineering processed data.......')
 # convert ‘Transaction Date’ into day_of_week (Mon/Tue.) and period_of_month (start, mid and end).
 if 'Transaction Date' in df.columns:
     df['Transaction Date'] = pd.to_datetime(df['Transaction Date'])
@@ -125,8 +149,8 @@ print("SIC to keep: ", list2keep)
 df['SIC Description'] = df['SIC Description'].apply(lambda x: x if x in list2keep else 'Other')
 
 # retailer to embeddings
-df = df[df['Normalized Retailer'].isin(list(model.wv.vocab))]
-retailerVec = model.wv[df['Normalized Retailer']]
+df = df[df['Normalized Retailer'].isin(list(retailer2vec_model.wv.vocab))]
+retailerVec = retailer2vec_model.wv[df['Normalized Retailer']]
 
 # convert retailer vector array into dataframe
 df_retailerVec = pd.DataFrame(retailerVec, columns=["retailerVec_%02d" % x for x in range(1,(retailerVec.shape[1])+1)]) 
@@ -141,8 +165,6 @@ df_dummy.reset_index(inplace=True,drop=True)
 df_retailerVec.reset_index(inplace=True,drop=True)
 df_input = pd.concat([df_dummy, df_retailerVec], axis = 1, sort = False, ignore_index = False)
 
-# save input file
-#df_input.to_csv('data/cc_data_input.csv')
 
 # train the synthesizer
 df_input_sample = df_input.sample(n = sample_num)
@@ -153,12 +175,28 @@ print("TVAE starts training at ", start)
 synthesizer = TVAESynthesizer()
 synthesizer.fit(data)
 print("TVAE training time: " + str(datetime.datetime.now()-start))
-
-# save the synthesizer
-#save_object(synthesizer, 'models/TVAE_synthesizer_test.pkl')
         
 # check out sample
 sampled = synthesizer.sample(1)
 np.set_printoptions(suppress = True, precision = 5)
 print('Sample data from synthesizer......')
 print(sampled)
+
+
+# choose if to save intermediate models and data, which will be used in generate.py
+if save_files:
+    print('Saving models and intermediate data.......')
+    # save the retailer2vec model
+    retailer2vec_model.save("models/retailer_embedding.model")
+
+    # save the grouped retailer_map
+    save_object(retailer_map_grouped, 'models/retailer_map_grouped.pkl')
+
+    # save the synthesizer
+    save_object(synthesizer, 'models/TVAE_synthesizer.pkl')
+    
+    # save processed file
+    df_processed.to_csv('data/cc_data_processed.csv')
+
+    # save input file
+    df_input.to_csv('data/cc_data_input.csv')
