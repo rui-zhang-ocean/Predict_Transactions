@@ -2,17 +2,28 @@ import pandas as pd
 import numpy as np
 from gensim.models import Word2Vec
 from sdgym.synthesizers import TVAESynthesizer
-import datetime
+from datetime import datetime
 import pickle
 from collections import defaultdict
 import sys
 sys.path.append("./src")
 from main_functions import *
+import argparse
+
 
 #---------------------------------INPUTS--------------------------------------
-raw_data_file = 'data/cc_data.csv'
-sample_num = 1000 # how many records are used for training
-save_files = False
+parser = argparse.ArgumentParser()
+parser.add_argument('--f', '--filename', type = str, default = 'data/cc_data.csv', 
+                    help = 'raw data file directory')
+parser.add_argument('--n', '--samplenum', type = int, default = 1000,
+                    help = 'randomely choosing n samples for training')
+parser.add_argument('--s', '--save', type = bool, default = False,
+                    help = 'to save generated synthesizers and intermediate variables or not')
+
+args = parser.parse_args()
+raw_data_file = args.f
+sample_num = args.n
+save_files = args.s
 
 #----------------------------------MAIN---------------------------------------
 # load data
@@ -24,12 +35,12 @@ df_train_emb = df[['Consumer ID','Normalized Retailer','SIC Description']].copy(
 
 # create training sets for retailer embedding
 print('Creating training sets......')
-start = datetime.datetime.now()
+start = datetime.now()
 training_data = groupBySICAndPerson(df_train_emb)
-print("Sets creating time: " + str(datetime.datetime.now()-start))
+print("Sets creating time: " + str(datetime.now()-start))
 
 # training retailer embedding
-start = datetime.datetime.now()
+start = datetime.now()
 print('Training retailer embedding......')
 retailer2vec_model = Word2Vec(sentences = training_data, # list of sets of retailers
                  iter = 10, # epoch
@@ -40,7 +51,7 @@ retailer2vec_model = Word2Vec(sentences = training_data, # list of sets of retai
                  hs = 0, # Set to 0, as we are applying negative sampling.
                  negative = 10, # If > 0, negative sampling will be used. We will use a value of 5.
                  window = 9999999)
-print("Embedding model training time: " + str(datetime.datetime.now()-start))
+print("Embedding model training time: " + str(datetime.now()-start))
 
 
 # remove unnecessary columns
@@ -153,11 +164,11 @@ df_input = pd.concat([df_dummy, df_retailerVec], axis = 1, sort = False, ignore_
 df_input_sample = df_input.sample(n = sample_num)
 data = df_input_sample.to_numpy()
 
-start = datetime.datetime.now()
+start = datetime.now()
 print("TVAE starts training at ", start)
 synthesizer = TVAESynthesizer()
 synthesizer.fit(data)
-print("TVAE training time: " + str(datetime.datetime.now()-start))
+print("TVAE training time: " + str(datetime.now()-start))
         
 # check out sample
 sampled = synthesizer.sample(1)
@@ -176,7 +187,7 @@ if save_files:
     save_object(retailer_map_grouped, 'models/retailer_map_grouped.pkl')
 
     # save the synthesizer
-    save_object(synthesizer, 'models/TVAE_synthesizer.pkl')
+    save_object(synthesizer, 'models/TVAE_synthesizer_test.pkl')
     
     # save processed file
     df_processed.to_csv('data/cc_data_processed.csv')

@@ -4,10 +4,8 @@ import pickle
 import torch
 import io
 import random
-
 from sklearn.linear_model import TweedieRegressor
 from sklearn import preprocessing
-
 import stats_can
 from fbprophet import Prophet
 from datetime import datetime
@@ -15,20 +13,29 @@ from gensim.models import Word2Vec
 import sys
 sys.path.append("./src")
 from main_functions import *
+import argparse
+
 
 #---------------------------------INPUTS--------------------------------------
-# define which synthesier to use
+parser = argparse.ArgumentParser()
+parser.add_argument('--y', '--year', type = int, default = datetime.now().year,
+                    help = 'which year to predict transactions')
+parser.add_argument('--m', '--month', type = int, default = datetime.now().month,
+                    help = 'which month to predict transactions')
+
+args = parser.parse_args()
+Y = args.y
+M = args.m
+
+
+#----------------------------------MAIN---------------------------------------
+# define which files to use
 synthesizer_file = 'models/TVAE_synthesizer.pkl'
 retailer_map_file = 'models/retailer_map_grouped.pkl'
 retailer_embedding_file = 'models/retailer_embedding.model'
 data_processed_file = 'data/cc_data_processed.csv'
 data_input_file = 'data/cc_data_input.csv'
 
-# which year and month to generate
-Y = 2020; M = 12
-
-
-#----------------------------------MAIN---------------------------------------
 # load processed input data to 
 # 1, calculate purchase amount and transaction counts by month and
 # 2, check mean purchase amount for each retailer (later)
@@ -148,5 +155,5 @@ df_reverse.drop(col2drop, axis = 1, inplace = True, errors = 'ignore')
 # save synthesized data into csv file
 output_filename = 'output/' + str(Y) + '_' + datetime.strptime(str(M), "%m").strftime("%b") + '.csv'
 print('Saving file at ' + output_filename + '......')
-#df_reverse.to_csv(output_filename)
+df_reverse.to_csv(output_filename)
         
