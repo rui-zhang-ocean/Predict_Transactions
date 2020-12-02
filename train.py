@@ -5,31 +5,14 @@ from sdgym.synthesizers import TVAESynthesizer
 import datetime
 import pickle
 from collections import defaultdict
-
+import sys
+sys.path.append("./src")
+from main_functions import *
 
 #---------------------------------INPUTS--------------------------------------
 raw_data_file = 'data/cc_data.csv'
 sample_num = 1000 # how many records are used for training
 save_files = False
-
-#----------------------------------FUNCTIONS----------------------------------
-# create reatiler sets grouped by SIC and consumer
-def groupBySICAndPerson(df):
-    df_group = df.groupby(['SIC Description','Consumer ID']).agg(lambda x: x.tolist())
-    training_data = df_group['Normalized Retailer'].tolist()
-    training_data = [x for x in training_data if len(x) > 1]
-    return training_data
-
-# view counts and percentage for each column's elements
-def view_column_counts(df, col_name):
-    df_pivot = df.groupby(by = col_name).size().reset_index(name='Counts')
-    df_pivot['Per (%)'] = (df_pivot['Counts'])/df.shape[0]*100
-    df_pivot.sort_values(by = 'Counts',ascending = False,inplace = True)
-    return df_pivot
-
-def save_object(obj, filename):
-    with open(filename, 'wb') as output:  # overwrite any existing file
-        pickle.dump(obj, output, pickle.DEFAULT_PROTOCOL)
 
 #----------------------------------MAIN---------------------------------------
 # load data
@@ -57,7 +40,7 @@ retailer2vec_model = Word2Vec(sentences = training_data, # list of sets of retai
                  hs = 0, # Set to 0, as we are applying negative sampling.
                  negative = 10, # If > 0, negative sampling will be used. We will use a value of 5.
                  window = 9999999)
-print("Model training time: " + str(datetime.datetime.now()-start))
+print("Embedding model training time: " + str(datetime.datetime.now()-start))
 
 
 # remove unnecessary columns
