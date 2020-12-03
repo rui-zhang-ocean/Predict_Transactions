@@ -6,16 +6,16 @@
 
 ## How to use the package
 
-The package includes two scripts. `train.py` uses raw data to train synthesizers. `generate.py` uses synthesizers (trained by `train.py`) to generate transaction records with specified year and month.
+The package includes two scripts. `train.py` uses raw data to train synthesizers. `generate.py` uses synthesizers (trained by `train.py`) to generate transaction records with specified year and month. Both scripts accept key-value pair arguments.
 
 ### `train.py`
 
 Inputs: 
-  * `--f` or `--filename`, default = `data/cc_data.csv`, string, raw data file directory
-  * `--n` or `--samplenum`, default = `1000`, integer, number of samples randomly chosen for training
-  * `--s` or `--save`, default = `False`, boolean, to save generated synthesizers and intermediate variables or not
+  * `--f` or `--filename`, string, raw data file directory, default = `data/cc_data.csv`
+  * `--n` or `--samplenum`, integer, number of samples randomly chosen for training, default = `1000`
+  * `--s` or `--save`, boolean, to save generated synthesizers and intermediate variables or not, default = `False`
   
-Outputs (only when `--save` is set to True):
+Outputs (only when `--save` is set to `True`):
   * `models/retailer_embedding.model`, retailer embedding model
   * `models/TVAE_synthesizer.pkl`, synthesizer file
   * `models/retailer_map_grouped.pkl`, retailer mapping file to each sectors
@@ -30,8 +30,8 @@ Example:
 ### `generate.py`
 
 Inputs:
-  * `--y` or `--year`, integer, default is current year
-  * `--m` or `--month`, integer, default is current month
+  * `--y` or `--year`, integer, which year to forecast transactions, default is current year
+  * `--m` or `--month`, integer, which month to forecast transactions, default is current month
   
 Outputs:
   * `output/xxxx_xxx.csv`, generated transaction records, for instance, `output/2020_Dec.csv`
