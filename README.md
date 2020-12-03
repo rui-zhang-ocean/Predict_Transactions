@@ -41,39 +41,35 @@ Example:
 >> Python3 generate.py --y 2020 --m 12
 ```
 
-## Data Description
+## Data Pre-processing
 
-For each transaction, the table contains information below:
+I selected the following features for each transaction, removed missing or invalid values.
 
 * Account Type
 * Consumer Gender
 * Consumer Age
-* Consumer Postal Code
-* Consumer Birth Year
-* Transaction Type
 * Transaction Date
 * Normalized Retailer
 * SIC Description (sector)
 * Purchase Amount
 
-## Data Cleaning and Feature Engineering
+## Feature Engineering
 
-* Missing values
+* One-hot-encoding
 * Age
 * Transaction Date
-* Retailer embedding using Item2Vec
+* Normalized Retailer
 
 ## Build Synthesizer
 
-* Tabular Variational Autoencoder (TVAE)
-* Compute engine setup on Google Cloud
+* How to train Tabular Variational Autoencoder (TVAE) on GCP
 
 ## Build Forecast Model
 
-* Web Scraper for Statistic Canada
+* API from Statistics Canada
 * Forecast macroeconomic data using `prophet`
-* Regression Model
-
-## Deployment
+* Generalized linear model
 
 ## Future Work
+
+* Deployment
