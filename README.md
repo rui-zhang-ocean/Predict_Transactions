@@ -55,10 +55,15 @@ I selected the following features for each transaction, removed missing or inval
 
 ## Feature Engineering
 
-* One-hot-encoding
-* Age
-* Transaction Date
-* Normalized Retailer
+Categorical variables with relatively smaller number of values (<10) will be treated with one-hot-encoding, including `Account Type`, `Consumer Gender` and `SIC Description`. Note that `SIC Description` only kept top 9 values and grouped the rest into `other`.
+
+`Age` was treated as continuous numerical variable at first but the synthesized age lost a big chunk of the middle age from 30 to 50. I fixed it by converting age into age range (i.e. 20-25, 25-30, 30-35, etc).
+
+`Transaction Date` was broken down into two categorical values `period of month` and `day of week`. `period of month` includes start (1-10 days), mid (11-20 days) and end (21 to the end of the month days). `day of week` refers to individual day of the week (Mon, Tue...). In this way the synthesizer can reflect daily and weekly variability. 
+
+`Normalized Retailer` is the most tricky variable to deal with. It contains over 2000 variables so embedding is needed to reduce the dimensions. I applied `item2vec` to convert it into 10 dimensions embeddings. I tested with different schemes of selecting training sets, the best scheme is to select training sets based on the same sector and customer. See below for the visualization of the embedding, different colors indicate different sectors:
+
+![retailer embedding](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/retailer2vec/exp_07_10emb.png "retailer embedding")
 
 ## Build Synthesizer
 
