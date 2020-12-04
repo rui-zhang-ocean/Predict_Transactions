@@ -43,7 +43,7 @@ Example:
 
 ## Data Pre-processing
 
-I selected the following features for each transaction, removed missing or invalid values.
+I selected the following features for each transaction record, and removed missing or invalid values.
 
 * Account Type
 * Consumer Gender
@@ -55,11 +55,11 @@ I selected the following features for each transaction, removed missing or inval
 
 ## Feature Engineering
 
-Categorical variables with relatively smaller number of values (<10) will be treated with one-hot-encoding, including `Account Type`, `Consumer Gender` and `SIC Description`. Note that `SIC Description` only kept top 9 values and grouped the rest into `other`.
+Categorical variables with number of values smaller than 10 will be treated with one-hot-encoding, including `Account Type`, `Consumer Gender` and `SIC Description`. Note that `SIC Description` only kept top 9 values and grouped the rest into `other`.
 
-`Age` was treated as continuous numerical variable at first but the synthesized age lost a big chunk of the middle age from 30 to 50. I fixed it by converting age into age range (i.e. 20-25, 25-30, 30-35, etc).
+`Age` was treated as continuous numerical variable at first but the synthesized age distribution didn't look optimal. I fixed it by converting age into age range (i.e. 20-25, 25-30, 30-35, etc).
 
-`Transaction Date` was broken down into two categorical values `period of month` and `day of week`. `period of month` includes start (1-10 days), mid (11-20 days) and end (21 to the end of the month days). `day of week` refers to individual day of the week (Mon, Tue...). In this way the synthesizer can reflect daily and weekly variability. 
+`Transaction Date` was broken down into two categorical values `period of month` and `day of week`. `period of month` contains variables `start` (1-10 days), `mid` (11-20 days) and `end` (21 to the end of the month days). `day of week` refers to individual day of the week (Mon, Tue, etc). Thus, the synthesizer can reflect daily and weekly variability. 
 
 `Normalized Retailer` is the most tricky variable to deal with. It contains over 2000 variables so embedding is needed to reduce the dimensions. I applied `item2vec` to convert it into 10 dimensions embeddings. I tested with different schemes of selecting training sets, the best scheme is to select training sets based on the same sector and customer.
 
@@ -67,15 +67,26 @@ Categorical variables with relatively smaller number of values (<10) will be tre
 
 ## Build Synthesizer
 
-I used Tabular Variational Autoencoder (TVAE) from [sdgym](https://github.com/sdv-dev/SDGym/blob/master/sdgym/synthesizers/tvae.py), which requires specification of which columns are ordinal, categorical or numerical values. The training could take up to a few days time depending on the number of the records to be used. GPU is recommended.
+### Tabular Variational Autoencoder (TVAE)
+
+I used Tabular Variational Autoencoder (TVAE) from [sdgym](https://github.com/sdv-dev/SDGym/blob/master/sdgym/synthesizers/tvae.py), which requires specification of which columns are ordinal, categorical or numerical values. The training could take up to a few days time depending on the number of the records being used. GPU is recommended.
+
+A post-correction is applied to `Transaction Amount` for each retailer by scaling with the average transaction amounts for each retailer from input data.
+
+### Evaluation of the synthesizer
+
+To evaluate the synthesizer performance, I examined the following variables:
+
+
 
 ## Build Forecast Model
 
 * API from Statistics Canada
+
+[stats_can](https://stats-can.readthedocs.io/en/latest/), a python library that wraps up the API from Statistics Canada
+
 * Forecast macroeconomic data using `prophet`
 * Generalized linear model
-
-## Synthesized data quality check
 
 ## Future Work
 
