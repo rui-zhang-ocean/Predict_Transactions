@@ -12,8 +12,8 @@ The package includes two scripts. `train.py` uses raw data to train synthesizers
 
 Inputs: 
   * `--f` or `--filename`, string, raw data file directory, default = `data/cc_data.csv`
-  * `--n` or `--samplenum`, integer, number of samples randomly chosen for training, default = `1000`
-  * `--s` or `--save`, boolean, to save generated synthesizers and intermediate variables or not, default = `False`
+  * `--n` or `--samplenum`, integer, number of samples randomly chosen for training, if no value is specified, the whole dataset will be used for training, default = `None`
+  * `--s` or `--save`, boolean, to save generated synthesizers and intermediate variables or not, default = `True`
   
 Outputs (only when `--save` is set to `True`):
   * `models/retailer_embedding.model`, retailer embedding model
