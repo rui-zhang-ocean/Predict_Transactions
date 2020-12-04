@@ -77,6 +77,9 @@ A post-correction is applied to `Transaction Amount` for each retailer by scalin
 
 To evaluate the synthesizer performance, I examined the following variables:
 
+* Age histogram (left is input data, right is synthesized data):
+
+![age histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/age_hist_input.png "age histogram input") ![age histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/age_hist_syn_ageCat70.png "age histogram synthesized")
 
 
 ## Build Forecast Model
