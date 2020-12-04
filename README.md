@@ -61,19 +61,21 @@ Categorical variables with relatively smaller number of values (<10) will be tre
 
 `Transaction Date` was broken down into two categorical values `period of month` and `day of week`. `period of month` includes start (1-10 days), mid (11-20 days) and end (21 to the end of the month days). `day of week` refers to individual day of the week (Mon, Tue...). In this way the synthesizer can reflect daily and weekly variability. 
 
-`Normalized Retailer` is the most tricky variable to deal with. It contains over 2000 variables so embedding is needed to reduce the dimensions. I applied `item2vec` to convert it into 10 dimensions embeddings. I tested with different schemes of selecting training sets, the best scheme is to select training sets based on the same sector and customer. See below for the visualization of the embedding, different colors indicate different sectors:
+`Normalized Retailer` is the most tricky variable to deal with. It contains over 2000 variables so embedding is needed to reduce the dimensions. I applied `item2vec` to convert it into 10 dimensions embeddings. I tested with different schemes of selecting training sets, the best scheme is to select training sets based on the same sector and customer.
 
 ![retailer embedding](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/retailer2vec/exp_07_10emb.png "retailer embedding")
 
 ## Build Synthesizer
 
-* How to train Tabular Variational Autoencoder (TVAE) on GCP
+I used Tabular Variational Autoencoder (TVAE) from [sdgym](https://github.com/sdv-dev/SDGym/blob/master/sdgym/synthesizers/tvae.py), which requires specification of which columns are ordinal, categorical or numerical values. The training could take up to a few days time depending on the number of the records to be used. GPU is recommended.
 
 ## Build Forecast Model
 
 * API from Statistics Canada
 * Forecast macroeconomic data using `prophet`
 * Generalized linear model
+
+## Synthesized data quality check
 
 ## Future Work
 
