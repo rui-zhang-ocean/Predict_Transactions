@@ -10,14 +10,13 @@ sys.path.append("./src")
 from main_functions import *
 import argparse
 
-
 #---------------------------------INPUTS--------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--f', '--filename', type = str, default = 'data/cc_data.csv', 
                     help = 'raw data file directory')
-parser.add_argument('--n', '--samplenum', type = int, default = 1000,
+parser.add_argument('--n', '--samplenum', type = int, default = None,
                     help = 'randomely choosing n samples for training')
-parser.add_argument('--s', '--save', type = bool, default = False,
+parser.add_argument('--s', '--save', type = bool, default = True,
                     help = 'to save generated synthesizers and intermediate variables or not')
 
 args = parser.parse_args()
@@ -49,7 +48,7 @@ retailer2vec_model = Word2Vec(sentences = training_data, # list of sets of retai
                  workers = 4, # specify the number of threads to be used for training
                  sg = 1, # Defines the training algorithm. We will use skip-gram so 1 is chosen.
                  hs = 0, # Set to 0, as we are applying negative sampling.
-                 negative = 10, # If > 0, negative sampling will be used. We will use a value of 5.
+                 negative = 10, # If > 0, negative sampling will be used.
                  window = 9999999)
 print("Embedding model training time: " + str(datetime.now()-start))
 
@@ -161,7 +160,11 @@ df_input = pd.concat([df_dummy, df_retailerVec], axis = 1, sort = False, ignore_
 
 
 # train the synthesizer
-df_input_sample = df_input.sample(n = sample_num)
+if sample_num is None:
+    df_input_sample = df_input
+else:
+    df_input_sample = df_input.sample(n = sample_num)
+    
 data = df_input_sample.to_numpy()
 
 start = datetime.now()

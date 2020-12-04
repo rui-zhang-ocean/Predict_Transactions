@@ -15,7 +15,6 @@ sys.path.append("./src")
 from main_functions import *
 import argparse
 
-
 #---------------------------------INPUTS--------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--y', '--year', type = int, default = datetime.now().year,
@@ -26,7 +25,6 @@ parser.add_argument('--m', '--month', type = int, default = datetime.now().month
 args = parser.parse_args()
 Y = args.y
 M = args.m
-
 
 #----------------------------------MAIN---------------------------------------
 # define which files to use
