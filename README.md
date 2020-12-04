@@ -81,6 +81,17 @@ To evaluate the synthesizer performance, I examined the following variables:
 
 ![age histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/age_hist_input.png "age histogram input") ![age histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/age_hist_syn_ageCat70.png "age histogram synthesized")
 
+* Purchase amount histogram
+
+![purchase histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_hist_input.png "purchase histogram input") ![purchase histogram](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_hist_syn_ageCat70_corr.png "purchase histogram synthesized")
+
+* Purchase amount barplot for top sectors 
+
+![purchase sector](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_SIC%20Description_input.png "purchase sector input") ![purchase sector](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_SIC%20Description_synthesized.png "purchase sector synthesized")
+
+* Purchase amount barplot for top retailers
+
+![purchase retailer](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_Normalized%20Retailer_input.png "purchase retailer input") ![purchase retailer](https://github.com/rui-zhang-ocean/Predict_Transactions/blob/master/experiments/figs/eda/purchase_Normalized%20Retailer_synthesized.png "purchase retailer synthesized")
 
 ## Build Forecast Model
 
