@@ -84,13 +84,17 @@ A post-correction is applied to `Transaction Amount` for each retailer by scalin
 
 ## Build Forecast Model
 
-* API from Statistics Canada
+### Forecast future economics
 
-[stats_can](https://stats-can.readthedocs.io/en/latest/), a python library that wraps up the API from Statistics Canada
+I collected macroeconomic data in the last three years using [stats_can](https://stats-can.readthedocs.io/en/latest/), a python library that wraps up the API from Statistics Canada. The indexes include CPI, GDP, TSX, Exchange Rate (USD to CAD) and Unemployment Rate. After the user gives a specific year and month, typically in the near future, I used [prophet](https://facebook.github.io/prophet/), an open source library developed by facebook, to forecast the macroeconomic indexes in future.
 
-* Forecast macroeconomic data using `prophet`
-* Generalized linear model
+### Forecast future transaction counts
+
+A generalized linear model with Poisson distribution and logarithm link function is built, using historical monthly transaction counts from the records and monthly macroeconomic data. With the forecasted future economic indexes from above step, I can forecast the transaction counts in future. I can then specify how many samples I would like the synthesizer to generate. 
+
+As mentioned above, breaking down transaction dates into `period of month` and `day of week` can reflect daily and weekly variability from historical records. Now combining with the monthly macroeconomic data to constrain future transaction numbers, the model is able to reflect monthly and yearly variability as well. 
 
 ## Future Work
 
-* Deployment
+* Retailer embedding improvement
+* Model deployment on GCP
