@@ -1,8 +1,10 @@
 # Project Summary
 
-* Building a predictive model to continuously forecast customer behaviour and optimize marketing strategies with historical transaction data.
-* Implementing tabular variational autoencoders to synthesize transaction records, with item embedding over 2000+ retailers.
-* Applying regression models using macroeconomic data to constrain monthly transaction counts, where data is collected with API from Statistics Canada.
+* Constructed a predictive model that continuously forecasts customer behaviors and optimizes marketing strategies based on historical transaction data.
+* Implemented tabular variational autoencoders to synthesize transaction records, with item embedding from over 2000 retailers.
+* Applied generalized linear regression models using macroeconomic data to constrain monthly transaction counts, with data sourced from Statistics Canada API.
+
+## [Blog on `towards data science`](https://towardsdatascience.com/a-deep-learning-based-method-for-synthesizing-data-with-an-application-in-financial-transactions-9c3936423d9a)
 
 ## How to use the package
 
