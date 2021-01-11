@@ -4,7 +4,7 @@
 * Implemented tabular variational autoencoders to synthesize transaction records, with item embedding from over 2000 retailers.
 * Applied generalized linear regression models using macroeconomic data to constrain monthly transaction counts, with data sourced from Statistics Canada API.
 
-## Published on [Towards Data Science](https://towardsdatascience.com/a-deep-learning-based-method-for-synthesizing-data-with-an-application-in-financial-transactions-9c3936423d9a) from Medium
+## Published on [Towards Data Science](https://towardsdatascience.com/a-deep-learning-based-method-for-synthesizing-data-with-an-application-in-financial-transactions-9c3936423d9a)
 
 ## How to use the package
 
